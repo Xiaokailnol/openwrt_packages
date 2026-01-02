@@ -58,12 +58,11 @@ jobs:
 
       - name: Build Packages
         if: steps.detect.outputs.pkgs != ''
-        uses: sbwml/openwrt-gh-action-sdk@helloworld
+        uses: Xiaokailnol/openwrt-gh-action-sdk@go1.26
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
           FEEDNAME: packages_ci
           PACKAGES: ${{ env.PACKAGES }}
-          KEY_BUILD: ${{ secrets.sign_key }}
           NO_REFRESH_CHECK: true
           IGNORE_ERRORS: true
 
