@@ -17,8 +17,8 @@ jobs:
         arch:
           - aarch64_generic
           - x86_64
-        tag:
-          - openwrt-24.10
+        sdk:
+          - 24.10.5
 
     steps:
       - uses: actions/checkout@v4
@@ -60,7 +60,7 @@ jobs:
         if: steps.detect.outputs.pkgs != ''
         uses: Xiaokailnol/openwrt-gh-action-sdk@go1.26
         env:
-          ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
+          ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
           PACKAGES: ${{ env.PACKAGES }}
           NO_REFRESH_CHECK: true
@@ -70,7 +70,7 @@ jobs:
         if: steps.detect.outputs.pkgs != ''
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.tag }}-${{ matrix.arch }}
+          name: ${{ matrix.sdk }}-${{ matrix.arch }}
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
 
       - name: Organize Files
