@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.arch }}-${{ matrix.sdk }}
+    name: Build ${{ matrix.arch }}-${{ matrix.tag }}
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -26,12 +26,10 @@ jobs:
           fetch-depth: 0
 
       - name: Free disk space
-        if: steps.detect.outputs.pkgs != ''
         run: |
           sudo rm -rf /usr/lib/{jvm,llvm} /usr/local /usr/src/* /var/lib/gems /var/lib/mysql /var/lib/snapd /etc/skel /opt/{microsoft,az,hostedtoolcache,cni,mssql-tools,pipx} /usr/share/{az*,dotnet,swift,miniconda,gradle*,java,kotlinc,ri,sbt} /root/{.sbt,.local,.npm} /usr/libexec/gcc/x86_64-linux-gnu/14 /usr/lib/x86_64-linux-gnu/{*clang*,*LLVM*} /home/linuxbrew
 
       - name: Build Packages
-        if: steps.detect.outputs.pkgs != ''
         uses: Xiaokailnol/openwrt-gh-action-sdk@go1.26
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
@@ -41,7 +39,6 @@ jobs:
           IGNORE_ERRORS: true
 
       - name: Upload artifacts
-        if: steps.detect.outputs.pkgs != ''
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.tag }}-${{ matrix.arch }}
