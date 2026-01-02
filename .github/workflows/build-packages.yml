@@ -63,6 +63,7 @@ jobs:
           ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
           FEEDNAME: packages_ci
           PACKAGES: ${{ env.PACKAGES }}
+          KEY_BUILD: ${{ secrets.sign_key }}
           NO_REFRESH_CHECK: true
           IGNORE_ERRORS: true
 
