@@ -88,4 +88,4 @@ jobs:
           [ -d .git ] && git init
           git add --all
           git commit -sm "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
-          git push "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:${{ matrix.target }}
+          git push "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:${{ matrix.arch }}
