@@ -34,7 +34,7 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
           FEEDNAME: packages_ci
-          PACKAGES: luci-app-adguardhome luci-app-argon-config luci-app-mosdns luci-app-openlist2 luci-theme-argon mosdns openlist2 v2dat
+          PACKAGES: luci-app-adguardhome luci-app-argon-config luci-app-mosdns luci-app-openlist2 luci-app-bandix luci-app-kucat-config luci-app-lucky luci-theme-kucat luci-theme-argon mosdns openlist2 v2dat lucky
           NO_REFRESH_CHECK: true
           IGNORE_ERRORS: true
 
