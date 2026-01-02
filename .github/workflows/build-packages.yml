@@ -72,11 +72,17 @@ jobs:
           name: ${{ matrix.tag }}-${{ matrix.arch }}
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
 
+      - name: Organize Files
+        run: |
+          mkdir -p rom
+          cp -v bin/packages/${{ matrix.arch }}/packages_ci/*.ipk rom/
+          
       - name: Git push
         continue-on-error: true
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "action"
+          cd rom
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
           [ -d .git ] && git init
           git add --all
