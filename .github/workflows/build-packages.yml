@@ -25,32 +25,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Detect changed packages
-        id: detect
-        run: |
-          ALL_PKGS="luci-app-adguardhome luci-app-argon-config luci-app-mosdns luci-app-openlist2 luci-theme-argon mosdns openlist2 v2dat"
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            PKGS="$ALL_PKGS"
-          else
-            CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | awk -F/ '{print $1}' | sort | uniq)
-            PKGS=""
-            for pkg in $ALL_PKGS; do
-              if echo "$CHANGED" | grep -qx "$pkg"; then
-                PKGS="$PKGS $pkg"
-              fi
-            done
-            PKGS=$(echo $PKGS | xargs)
-          fi
-          PKGS=$(echo $PKGS | xargs -n1 | sort -u | xargs)
-          echo "PACKAGES=$PKGS" >> $GITHUB_ENV
-          echo "pkgs=$PKGS" >> $GITHUB_OUTPUT
-
-      - name: Skip if no package changed
-        if: steps.detect.outputs.pkgs == ''
-        run: |
-          echo "No package changed, skipping build."
-          exit 0
-
       - name: Free disk space
         if: steps.detect.outputs.pkgs != ''
         run: |
@@ -62,7 +36,7 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
           FEEDNAME: packages_ci
-          PACKAGES: ${{ env.PACKAGES }}
+          PACKAGES: luci-app-adguardhome luci-app-argon-config luci-app-mosdns luci-app-openlist2 luci-theme-argon mosdns openlist2 v2dat
           NO_REFRESH_CHECK: true
           IGNORE_ERRORS: true
 
@@ -83,9 +57,11 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "action"
-          cd rom
-          Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-          [ -d .git ] && git init
-          git add --all
-          git commit -sm "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
-          git push "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:${{ matrix.arch }}
+          git clone -b ${{ matrix.arch }} https://github.com/Xiaokailnol/openwrt_packages.git repo
+          cd repo
+          find . -mindepth 1 -maxdepth 1 ! -name ".git" -exec rm -rf {} +
+          cp -rf ../rom/* .
+          Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🌈" "🔥" "🏅" "🦄" "🐤")
+          git add -A
+          git commit -m "${Emoji[$RANDOM % ${#Emoji[@]}]} Force sync rom $(date '+%Y-%m-%d %H:%M:%S')"
+          git push --force "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:${{ matrix.arch }}
